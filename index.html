@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { background: black; margin: 0; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<script>
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  // Google Sheet'inden veya Drive'dan gelen kendi kelimelerin
+  const customWords = ["BU BİR FARKINDALIK TESTİDİR", "GÜVENLİĞİNDEN EMİN OLMADIĞINIZ QR KODLARI TARATMAYINIZ"];
+  const chars = "0123456789ABCDEF@#$%&*";
+
+  const fontSize = 20;
+  const columns = canvas.width / fontSize;
+  const drops = Array(Math.floor(columns)).fill(1);
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      // %15 ihtimalle senin kelimelerinden birini, %85 ihtimalle rastgele karakter basar
+      const isWord = Math.random() < 0.01;
+      const text = isWord ? customWords[Math.floor(Math.random() * customWords.length)] : chars[Math.floor(Math.random() * chars.length)];
+      
+      ctx.fillStyle = isWord ? "#FFFFFF" : "#FF0000"; // Özel kelimeler Beyaz, diğerleri Yeşil
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  setInterval(draw, 33);
+</script>
+</body>
+</html>
