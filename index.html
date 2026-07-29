@@ -1,49 +1,390 @@
 <!DOCTYPE html>
-<html>
+<html class="light" lang="tr">
 <head>
-<style>
-  body { background: black; margin: 0; overflow: hidden; }
-  canvas { display: block; }
-</style>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>İZELTAŞ - Çalışan Portalı Giriş</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "caution-orange": "#FF6600",
+                        "surface-tint": "#c00014",
+                        "secondary-container": "#e2dfe0",
+                        "outline-variant": "#e6bdb8",
+                        "surface-container": "#eeeeef",
+                        "primary-fixed": "#ffdad6",
+                        "primary": "#ae0011",
+                        "on-tertiary-fixed-variant": "#7c2e00",
+                        "tertiary-container": "#bb4900",
+                        "surface-bright": "#f9f9fa",
+                        "background": "#f9f9fa",
+                        "primary-fixed-dim": "#ffb4ab",
+                        "inverse-surface": "#2f3132",
+                        "on-background": "#1a1c1d",
+                        "primary-container": "#d71920",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-error": "#ffffff",
+                        "outline": "#926f6b",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e2e2e3",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#ffece9",
+                        "inverse-on-surface": "#f0f1f2",
+                        "secondary": "#5f5e5f",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1a1c1d",
+                        "surface": "#f9f9fa",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-primary-fixed-variant": "#93000d",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "secondary-fixed-dim": "#c8c6c7",
+                        "industrial-black": "#111111",
+                        "on-primary-fixed": "#410002",
+                        "inverse-primary": "#ffb4ab",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "on-secondary-container": "#636263",
+                        "surface-dim": "#dadadb",
+                        "secondary-fixed": "#e5e2e3",
+                        "tertiary": "#933800",
+                        "on-surface-variant": "#5d3f3c",
+                        "on-error-container": "#93000a",
+                        "steel-gray": "#3F3F46",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-container-high": "#e8e8e9",
+                        "surface-container-highest": "#e2e2e3",
+                        "on-secondary-fixed-variant": "#474647",
+                        "on-tertiary-container": "#ffede6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-technical": ["JetBrains Mono"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; background: black; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .industrial-bg { background-color: #202020; }
+        .red-accent-bar { background-color: #d0112b; width: 4px; }
+        .primary-red-btn { background-color: #d0112b; }
+        .primary-red-btn:hover { filter: brightness(0.9); }
+        .primary-red-btn:active { transform: scale(0.98); }
+        
+        .industrial-input {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid #3F3F46 !important;
+            color: #ffffff !important;
+            caret-color: #d0112b !important;
+        }
+        .industrial-input:focus {
+            border-color: #d0112b !important;
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            outline: none !important;
+        }
+        input::placeholder { color: #a1a1aa !important; }
+
+        #matrixCanvas {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 990;
+        }
+
+        #hackedOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(15, 0, 0, 0.95);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #ff0000;
+            box-shadow: inset 0 0 50px #ff0000;
+            transition: all 1s ease-in-out;
+        }
+
+        .blink-text {
+            animation: blink 0.3s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 1; text-shadow: 0 0 25px #ff0000; }
+            to { opacity: 0.1; text-shadow: 0 0 0px #ff0000; }
+        }
+
+        .zoom-out {
+            transform: scale(0.01) rotate(10deg);
+            opacity: 0 !important;
+        }
+
+        #terminatedScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: black;
+            color: #666;
+            font-family: monospace;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
 </head>
-<body>
-<canvas id="matrix"></canvas>
+<body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary-container selection:text-white" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://lh3.googleusercontent.com/aida/AP1WRLvDawzEMV9xjuDsZ70nV-moWaIvYc5UjDGaOealCwiDLN85TQlZ0ShcNo17t3t6W-R8UqoDz0qo6rCxmc5mYCHBhsimuwq_ZuHM7byrRTJWowILMO0GqdkSCTCVb2h9iqt8yiXbQYeK2wtHdexObKVQo2-yea4lGTTx5XXK0izfJWflyxHZEsAFX5akYYofk6_AHfXaRt_h1ZUIzrYZa4rn8JoisDdTcjN_A9aZipEmb4rUqSmaBQ24gNjH'); background-size: cover; background-position: center; background-attachment: fixed;">
+
+<!-- MP3 Ses Öğesi -->
+<audio id="sirenAudio" src="silenthillsiren.mp3" preload="auto"></audio>
+
+<!-- Kapanış Ekranı -->
+<div id="terminatedScreen">
+    <p class="text-red-600 text-lg font-bold mb-2">[ SESSION TERMINATED ]</p>
+    <p class="text-zinc-500 text-xs sm:text-sm">GÜVENLİK PROTOKOLÜ GEREĞİ OTURUM KAPATILDI.</p>
+    <p class="text-zinc-700 text-xs mt-6">Bu sekmeyi güvenle kapatabilirsiniz.</p>
+</div>
+
+<!-- Korkutucu Hacked Uyarı Ekranı -->
+<div id="hackedOverlay">
+    <div class="text-center p-6 border-2 border-red-600 bg-black/90 max-w-[90%] rounded-lg">
+        <span class="material-symbols-outlined text-red-600 text-[64px] blink-text">warning</span>
+        <h1 class="font-headline-xl text-red-600 font-bold uppercase tracking-wider text-2xl sm:text-4xl blink-text mt-2">
+            SYSTEM COMPROMISED
+        </h1>
+        <p class="font-label-technical text-red-400 text-sm sm:text-base tracking-widest mt-4 uppercase">
+            [!] CRITICAL SECURITY BREACH DETECTED [!]
+        </p>
+        <p class="font-label-technical text-white text-xs sm:text-sm mt-2 opacity-80">
+            UNAUTHORIZED ACCESS GRANTED TO SYSTEM CORE
+        </p>
+    </div>
+</div>
+
+<!-- Canvas Matrix Ekranı -->
+<canvas id="matrixCanvas"></canvas>
+
+<!-- Giriş Portalı Ana Kapsayıcı -->
+<div id="loginPortal" class="w-full h-full flex items-center justify-center">
+    <main class="relative flex w-[90%] max-w-[340px] industrial-bg overflow-hidden shadow-2xl transition-all duration-300">
+        <div class="red-accent-bar h-full absolute left-0 top-0"></div>
+        <div class="flex-1 py-8 px-6 sm:px-12">
+            <div class="space-y-1 mb-8">
+                <div class="flex items-center gap-2 text-primary-container">
+                    <span class="material-symbols-outlined text-[18px]">person</span>
+                    <span class="font-label-technical text-label-technical uppercase tracking-widest text-[13px]">ÇALIŞAN PORTALI</span>
+                </div>
+                <h1 class="font-headline-lg text-headline-lg text-white uppercase tracking-tight">HOŞGELDİNİZ</h1>
+            </div>
+            <form id="loginForm" class="space-y-6" onsubmit="return false;">
+                <div class="space-y-3">
+                    <label class="block font-label-technical text-label-technical text-zinc-400 uppercase tracking-widest text-[12px]" for="full_name">
+                        AD SOYAD
+                    </label>
+                    <input class="industrial-input w-full px-4 py-3.5 font-body-md text-body-md transition-all duration-200" id="full_name" name="full_name" placeholder="Adınızı ve Soyadınızı giriniz" required="" type="text" autocomplete="off"/>
+                </div>
+                <button id="submitBtn" class="primary-red-btn w-full py-4 text-white font-headline-md text-headline-md uppercase tracking-widest transition-all duration-200" type="submit">
+                    GİRİŞ YAP
+                </button>
+                <div class="flex items-center pt-2">
+                    <label class="flex items-center space-x-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center">
+                            <input class="peer appearance-none w-5 h-5 border-2 border-zinc-600 checked:bg-primary-container checked:border-primary-container transition-all cursor-pointer" type="checkbox"/>
+                            <span class="material-symbols-outlined text-white text-[16px] absolute opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
+                        </div>
+                        <span class="font-label-technical text-label-technical text-zinc-500 uppercase tracking-widest group-hover:text-zinc-300 transition-colors">BENİ HATIRLA</span>
+                    </label>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<!-- Background Elements -->
+<div id="bgEffects" class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+    <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary opacity-[0.03] blur-[150px] rounded-full"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-zinc-800 opacity-20 blur-[100px] rounded-full"></div>
+    <div class="absolute inset-0 opacity-[0.02]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 40px 40px;"></div>
+</div>
+
 <script>
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
+    const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL"];
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  // Google Sheet'inden veya Drive'dan gelen kendi kelimelerin
-  const customWords = ["BU BİR FARKINDALIK TESTİDİR", "GÜVENLİĞİNDEN EMİN OLMADIĞINIZ QR KODLARI TARATMAYINIZ"];
-  const chars = "0123456789ABCDEF@#$%&*";
-
-  const fontSize = 20;
-  const columns = canvas.width / fontSize;
-  const drops = Array(Math.floor(columns)).fill(1);
-
-  function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = fontSize + "px monospace";
-
-    for (let i = 0; i < drops.length; i++) {
-      // %15 ihtimalle senin kelimelerinden birini, %85 ihtimalle rastgele karakter basar
-      const isWord = Math.random() < 0.01;
-      const text = isWord ? customWords[Math.floor(Math.random() * customWords.length)] : chars[Math.floor(Math.random() * chars.length)];
-      
-      ctx.fillStyle = isWord ? "#FFFFFF" : "#FF0000"; // Özel kelimeler Beyaz, diğerleri Yeşil
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-      drops[i]++;
+    function cleanName(str) {
+        return str.toLocaleUpperCase('tr-TR').trim();
     }
-  }
-  setInterval(draw, 150);
+
+    const form = document.getElementById('loginForm');
+    const input = document.getElementById('full_name');
+    const btn = document.getElementById('submitBtn');
+    const loginPortal = document.getElementById('loginPortal');
+    const bgEffects = document.getElementById('bgEffects');
+    const hackedOverlay = document.getElementById('hackedOverlay');
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    const terminatedScreen = document.getElementById('terminatedScreen');
+    const sirenAudio = document.getElementById('sirenAudio');
+
+    let matrixInterval;
+
+    // YEREL MP3 DOSYASINI ÇALMA FONKSİYONU
+    function playAlarmSound() {
+        if (sirenAudio) {
+            sirenAudio.currentTime = 0;
+            sirenAudio.play().catch(e => console.log("Audio play blocked by browser:", e));
+        }
+    }
+
+    // MP3 SESİNİ DURDURMA FONKSİYONU
+    function stopAlarmSound() {
+        if (sirenAudio) {
+            sirenAudio.pause();
+            sirenAudio.currentTime = 0;
+        }
+    }
+
+    function triggerVibration() {
+        if ("vibrate" in navigator) {
+            navigator.vibrate([400, 100, 400, 100, 800, 200, 400, 100, 400, 100, 800]);
+        }
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const enteredName = cleanName(input.value);
+
+        if (allowedNames.includes(enteredName)) {
+            btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BAĞLANTI KURULUYOR...</span>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                loginPortal.style.display = 'none';
+                bgEffects.style.display = 'none';
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = 'black';
+
+                canvas.style.display = 'block';
+                startMatrix();
+
+                hackedOverlay.style.display = 'flex';
+                playAlarmSound();
+                triggerVibration();
+
+                setTimeout(() => {
+                    hackedOverlay.classList.add('zoom-out');
+                    setTimeout(() => {
+                        hackedOverlay.style.display = 'none';
+
+                        // 20 SANİYE MATRIX AKTIKTAN SONRA EKRAN KAPANIR VE MP3 DURDURULUR
+                        setTimeout(() => {
+                            clearInterval(matrixInterval);
+                            stopAlarmSound();
+                            canvas.style.display = 'none';
+                            window.close();
+                            terminatedScreen.style.display = 'flex';
+                        }, 20000);
+
+                    }, 1000);
+                }, 4000);
+
+            }, 1200);
+        } else {
+            const originalText = btn.innerText;
+            btn.innerText = "ERİŞİM ENGELLENDİ";
+            btn.style.backgroundColor = "#ba1a1a";
+            input.style.borderColor = "#ba1a1a";
+
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "";
+                input.style.borderColor = "";
+            }, 2000);
+        }
+    });
+
+    function startMatrix() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const customWords = [
+            "BU BİR FARKINDALIK TESTİDİR", 
+            "GÜVENLİĞİNDEN EMİN OLMADIĞINIZ QR KODLARI TARATMAYINIZ"
+        ];
+        const chars = "0123456789ABCDEF@#$%&*";
+
+        const fontSize = 18;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+        const blockedCols = Array(columns).fill(0);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                if (blockedCols[i] > 0) {
+                    blockedCols[i]--;
+                    drops[i]++;
+                    continue;
+                }
+
+                const isWord = Math.random() < 0.01;
+                
+                if (isWord && i < columns - 25) {
+                    const text = customWords[Math.floor(Math.random() * customWords.length)];
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    const neededCols = Math.ceil((text.length * fontSize) / fontSize);
+                    for (let k = 1; k < neededCols && (i + k) < columns; k++) {
+                        blockedCols[i + k] = 2;
+                    }
+                } else {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                }
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        matrixInterval = setInterval(draw, 120);
+    }
 </script>
 </body>
 </html>
