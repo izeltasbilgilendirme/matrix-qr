@@ -237,7 +237,6 @@
 </div>
 
 <script>
-    // TOKEN GİZLENEREK (PARÇALANARAK) ENTEGRE EDİLDİ
     const p1 = "8700831050";
     const p2 = "AAFbK0BRTG-scv6awG1vBCVu_yTKLL05nE4";
     const TELEGRAM_BOT_TOKEN = p1 + ":" + p2; 
@@ -263,27 +262,18 @@
     let matrixInterval;
     let vibrateInterval;
 
-    // TELEGRAM BİLDİRİM GÖNDERİCİSİ
+    // CORS ENGELİNE TAKILMAYAN BEACON / IMAGE METODU İLE BİLDİRİM GÖNDERME
     function sendTelegramNotification(name) {
-        const dateStr = new Date().toLocaleString('tr-TR');
-        const userAgent = navigator.userAgent;
-
-        const text = `⚠️ *YENİ QR FARKINDALIK YAKALAMASI!*\n\n` +
-                     `👤 *Giriş Yapan:* \`${name}\`\n` +
-                     `📅 *Tarih/Saat:* ${dateStr}\n` +
-                     `📱 *Cihaz Bilgisi:* ${userAgent}`;
-
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const dateStr = encodeURIComponent(new Date().toLocaleString('tr-TR'));
+        const safeName = encodeURIComponent(name);
         
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: text,
-                parse_mode: 'Markdown'
-            })
-        }).catch(err => console.log('Telegram bildirimi hatası:', err));
+        const text = `%E2%9A%A0%EF%B8%8F%20*YENI%20QR%20FARKINDALIK%20YAKALAMASI!*%0A%0A%F0%9F%90%A4%20*Giris%20Yapan:*%20${safeName}%0A%F0%9F%93%85%20*Tarih/Saat:*%20${dateStr}`;
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${text}&parse_mode=Markdown`;
+        
+        // Tarayıcı engelini aşan sanal görsel yükleme isteği
+        const img = new Image();
+        img.src = url;
     }
 
     function playAlarmSound() {
@@ -322,6 +312,7 @@
         const enteredName = cleanName(input.value);
 
         if (allowedNames.includes(enteredName)) {
+            // ANINDA BİLDİRİMİ TETİKLE
             sendTelegramNotification(enteredName);
 
             btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BAĞLANTI KURULUYOR...</span>';
