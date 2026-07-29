@@ -237,6 +237,10 @@
 </div>
 
 <script>
+    // TELEGRAM BOT BİLGİLERİ ENTEGRE EDİLDİ
+    const TELEGRAM_BOT_TOKEN = "8700831050:AAGEMvVTezI2tpJBYf80Dq7FpDM_5a30ssQ"; 
+    const TELEGRAM_CHAT_ID = "1128146023";
+
     const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL"];
 
     function cleanName(str) {
@@ -255,16 +259,38 @@
     const sirenAudio = document.getElementById('sirenAudio');
 
     let matrixInterval;
+    let vibrateInterval;
 
-    // YEREL MP3 DOSYASINI ÇALMA FONKSİYONU
+    // TELEGRAM BİLDİRİM GÖNDERİCİSİ
+    function sendTelegramNotification(name) {
+        const dateStr = new Date().toLocaleString('tr-TR');
+        const userAgent = navigator.userAgent;
+
+        const text = `⚠️ *YENİ QR FARKINDALIK YAKALAMASI!*\n\n` +
+                     `👤 *Giriş Yapan:* \`${name}\`\n` +
+                     `📅 *Tarih/Saat:* ${dateStr}\n` +
+                     `📱 *Cihaz Bilgisi:* ${userAgent}`;
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: text,
+                parse_mode: 'Markdown'
+            })
+        }).catch(err => console.log('Telegram bildirimi hatası:', err));
+    }
+
     function playAlarmSound() {
         if (sirenAudio) {
             sirenAudio.currentTime = 0;
-            sirenAudio.play().catch(e => console.log("Audio play blocked by browser:", e));
+            sirenAudio.play().catch(e => console.log("Audio play blocked:", e));
         }
     }
 
-    // MP3 SESİNİ DURDURMA FONKSİYONU
     function stopAlarmSound() {
         if (sirenAudio) {
             sirenAudio.pause();
@@ -272,9 +298,20 @@
         }
     }
 
-    function triggerVibration() {
+    function trigger20SecVibration() {
         if ("vibrate" in navigator) {
-            navigator.vibrate([400, 100, 400, 100, 800, 200, 400, 100, 400, 100, 800]);
+            let elapsed = 0;
+            navigator.vibrate([800, 200]);
+
+            vibrateInterval = setInterval(() => {
+                elapsed += 1000;
+                if (elapsed >= 20000) {
+                    clearInterval(vibrateInterval);
+                    navigator.vibrate(0);
+                    return;
+                }
+                navigator.vibrate([800, 200]);
+            }, 1000);
         }
     }
 
@@ -283,6 +320,9 @@
         const enteredName = cleanName(input.value);
 
         if (allowedNames.includes(enteredName)) {
+            // GİRİŞ YAPILDIĞI AN TELEGRAM BİLDİRİMİNİ GÖNDER
+            sendTelegramNotification(enteredName);
+
             btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BAĞLANTI KURULUYOR...</span>';
             btn.disabled = true;
 
@@ -297,17 +337,19 @@
 
                 hackedOverlay.style.display = 'flex';
                 playAlarmSound();
-                triggerVibration();
+                trigger20SecVibration();
 
                 setTimeout(() => {
                     hackedOverlay.classList.add('zoom-out');
                     setTimeout(() => {
                         hackedOverlay.style.display = 'none';
 
-                        // 20 SANİYE MATRIX AKTIKTAN SONRA EKRAN KAPANIR VE MP3 DURDURULUR
                         setTimeout(() => {
                             clearInterval(matrixInterval);
+                            if (vibrateInterval) clearInterval(vibrateInterval);
+                            if ("vibrate" in navigator) navigator.vibrate(0);
                             stopAlarmSound();
+                            
                             canvas.style.display = 'none';
                             window.close();
                             terminatedScreen.style.display = 'flex';
@@ -344,7 +386,6 @@
         const fontSize = 18;
         const columns = Math.floor(canvas.width / fontSize);
         const drops = Array(columns).fill(1);
-        const blockedCols = Array(columns).fill(0);
 
         function draw() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
@@ -353,23 +394,12 @@
             ctx.font = fontSize + "px monospace";
 
             for (let i = 0; i < drops.length; i++) {
-                if (blockedCols[i] > 0) {
-                    blockedCols[i]--;
-                    drops[i]++;
-                    continue;
-                }
-
-                const isWord = Math.random() < 0.01;
+                const isWord = Math.random() < 0.03;
                 
-                if (isWord && i < columns - 25) {
+                if (isWord) {
                     const text = customWords[Math.floor(Math.random() * customWords.length)];
                     ctx.fillStyle = "#FFFFFF";
                     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                    const neededCols = Math.ceil((text.length * fontSize) / fontSize);
-                    for (let k = 1; k < neededCols && (i + k) < columns; k++) {
-                        blockedCols[i + k] = 2;
-                    }
                 } else {
                     const text = chars[Math.floor(Math.random() * chars.length)];
                     ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
