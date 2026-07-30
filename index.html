@@ -138,7 +138,7 @@
             position: fixed;
             inset: 0;
             z-index: 1001;
-            background: #02182b;
+            background: #002244;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -202,9 +202,16 @@
 <!-- 2. İŞCEP PARA TRANSFERİ LOADING EKRANI -->
 <div id="iscepLoadingOverlay">
     <div class="flex flex-col items-center justify-center space-y-5 w-full max-w-md">
-        <!-- Doğrudan Erişilebilir İş Bankası / İşCep Logosu -->
-        <div class="p-2 bg-white rounded-2xl shadow-2xl border border-blue-400/30 overflow-hidden w-20 h-20 flex items-center justify-center">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/T%C3%BCrkiye_%C4%B0%C5%9F_Bankas%C4%B1_logo.svg/512px-T%C3%BCrkiye_%C4%B0%C5%9F_Bankas%C4%B1_logo.svg.png" alt="İşCep Logo" class="w-full h-full object-contain p-1"/>
+        
+        <!-- Doğrudan Koda Gömülü İş Bankası / İşCep Vektörel Logosu (SVG) -->
+        <div class="p-3 bg-white rounded-2xl shadow-2xl border border-blue-400/40 flex items-center justify-center w-24 h-24">
+            <svg class="w-full h-full text-[#003366]" viewBox="0 0 100 100" fill="currentColor">
+                <!-- İş Bankası Simgesi -->
+                <rect x="42" y="10" width="16" height="80" rx="2" />
+                <rect x="15" y="42" width="70" height="16" rx="2" />
+                <circle cx="50" cy="50" r="12" fill="#003366" />
+                <circle cx="50" cy="50" r="6" fill="#ffffff" />
+            </svg>
         </div>
         
         <div class="text-center space-y-1">
