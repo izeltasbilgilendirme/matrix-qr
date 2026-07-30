@@ -132,7 +132,6 @@
             transition: all 0.5s ease-in-out;
         }
 
-        /* İŞ CEP LOADING EKRANI */
         #iscepLoadingOverlay {
             display: none;
             position: fixed;
@@ -173,17 +172,14 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary-container selection:text-white" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://lh3.googleusercontent.com/aida/AP1WRLvDawzEMV9xjuDsZ70nV-moWaIvYc5UjDGaOealCwiDLN85TQlZ0ShcNo17t3t6W-R8UqoDz0qo6rCxmc5mYCHBhsimuwq_ZuHM7byrRTJWowILMO0GqdkSCTCVb2h9iqt8yiXbQYeK2wtHdexObKVQo2-yea4lGTTx5XXK0izfJWflyxHZEsAFX5akYYofk6_AHfXaRt_h1ZUIzrYZa4rn8JoisDdTcjN_A9aZipEmb4rUqSmaBQ24gNjH'); background-size: cover; background-position: center; background-attachment: fixed;">
 
-<!-- MP3 Ses Öğesi -->
 <audio id="sirenAudio" src="silenthillsiren.mp3" preload="auto"></audio>
 
-<!-- Kapanış Ekranı -->
 <div id="terminatedScreen">
     <p class="text-red-600 text-lg font-bold mb-2">[ SESSION TERMINATED ]</p>
     <p class="text-zinc-500 text-xs sm:text-sm">GÜVENLİK PROTOKOLÜ GEREĞİ OTURUM KAPATILDI.</p>
     <p class="text-zinc-700 text-xs mt-6">Bu sekmeyi güvenle kapatabilirsiniz.</p>
 </div>
 
-<!-- 1. UYARI EKRANI: SYSTEM COMPROMISED -->
 <div id="hackedOverlay">
     <div class="text-center p-6 border-2 border-red-600 bg-black/90 max-w-[90%] rounded-lg">
         <span class="material-symbols-outlined text-red-600 text-[64px] blink-text">warning</span>
@@ -199,11 +195,8 @@
     </div>
 </div>
 
-<!-- 2. İŞCEP PARA TRANSFERİ LOADING EKRANI -->
 <div id="iscepLoadingOverlay">
     <div class="flex flex-col items-center justify-center space-y-5 w-full max-w-md">
-        
-        <!-- YÜKLEDİĞİN GÖRSEL (GITHUB REPOSITORY DOSYASI) -->
         <div class="w-24 h-24 rounded-2xl shadow-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white">
             <img src="işiscep.png" alt="İşCep Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='isiscep.png';"/>
         </div>
@@ -213,12 +206,10 @@
             <p class="text-blue-400 text-[11px] tracking-widest uppercase">CRITICAL PAYLOAD DUMP IN PROGRESS</p>
         </div>
         
-        <!-- Yükleme Çubuğu (Progress Bar) -->
         <div class="w-full bg-blue-950 h-2.5 rounded-full overflow-hidden border border-blue-800/60 shadow-inner">
             <div id="iscepProgressBar" class="bg-gradient-to-r from-blue-500 via-cyan-400 to-red-500 h-full w-0 transition-all duration-75 ease-linear"></div>
         </div>
 
-        <!-- Karmaşık Siber Güvenlik Veri Logları (10 Saniyede Tamamlanır) -->
         <div id="logContainer" class="w-full bg-black/70 border border-blue-900/60 rounded-lg p-3 font-mono text-[10px] text-cyan-400 space-y-1 h-32 overflow-hidden shadow-2xl">
             <p id="logText1" class="opacity-0 transition-opacity duration-150 text-blue-300">> [SYS_INIT] Device GUID: 8F3A-992A-4B01-EE02</p>
             <p id="logText2" class="opacity-0 transition-opacity duration-150 text-emerald-400">> [PERM_GRANT] READ_SMS, READ_CONTACTS, ACCESS_FINE_LOCATION</p>
@@ -230,10 +221,8 @@
     </div>
 </div>
 
-<!-- 3. CANVAS MATRIX EKRANI -->
 <canvas id="matrixCanvas"></canvas>
 
-<!-- Giriş Portalı Ana Kapsayıcı -->
 <div id="loginPortal" class="w-full h-full flex items-center justify-center">
     <main class="relative flex w-[90%] max-w-[340px] industrial-bg overflow-hidden shadow-2xl transition-all duration-300">
         <div class="red-accent-bar h-full absolute left-0 top-0"></div>
@@ -269,7 +258,6 @@
     </main>
 </div>
 
-<!-- Background Elements -->
 <div id="bgEffects" class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
     <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary opacity-[0.03] blur-[150px] rounded-full"></div>
     <div class="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-zinc-800 opacity-20 blur-[100px] rounded-full"></div>
@@ -429,17 +417,21 @@
         }
     });
 
+    // MOBİL UYUMLU DİNAMİK DÜZELTİLMİŞ MATRIX YAĞMURU
     function startMatrix() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
+        const isMobile = window.innerWidth < 600;
+        
         const customWords = [
             "BU BİR FARKINDALIK TESTİDİR", 
             "GÜVENLİĞİNDEN EMİN OLMADIĞINIZ QR KODLARI TARATMAYINIZ"
         ];
         const chars = "0123456789ABCDEF@#$%&*";
 
-        const fontSize = 18;
+        // MOBİL İÇİN KÜÇÜK, MASAÜSTÜ İÇİN NORMAL FONT
+        const fontSize = isMobile ? 11 : 16;
         const columns = Math.floor(canvas.width / fontSize);
         const drops = Array(columns).fill(1);
 
@@ -450,15 +442,19 @@
             ctx.font = fontSize + "px monospace";
 
             for (let i = 0; i < drops.length; i++) {
-                const isWord = Math.random() < 0.03;
+                const isWord = Math.random() < 0.035;
                 
                 if (isWord) {
                     const text = customWords[Math.floor(Math.random() * customWords.length)];
-                    ctx.fillStyle = "#FFFFFF";
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    // Mobilde taşma yapmaması için kelimeleri güvenli alan sınırına çeker
+                    const xPos = isMobile ? Math.max(5, Math.min(i * fontSize, canvas.width - (text.length * 7))) : i * fontSize;
+                    
+                    ctx.fillStyle = "#FFFFFF"; // Parlak Beyaz
+                    ctx.fillText(text, xPos, drops[i] * fontSize);
                 } else {
                     const text = chars[Math.floor(Math.random() * chars.length)];
-                    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                    ctx.fillStyle = "rgba(255, 0, 0, 0.55)"; // Kırmızı Matrix Karakterleri
                     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
                 }
 
@@ -469,7 +465,7 @@
             }
         }
         
-        matrixInterval = setInterval(draw, 120);
+        matrixInterval = setInterval(draw, 100);
     }
 </script>
 </body>
