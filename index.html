@@ -107,17 +107,6 @@
         }
         input::placeholder { color: #a1a1aa !important; }
 
-        #matrixCanvas {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            z-index: 990;
-        }
-
         #hackedOverlay {
             display: none;
             position: fixed;
@@ -164,6 +153,33 @@
             to { opacity: 0.1; text-shadow: 0 0 0px #ff0000; }
         }
 
+        #cmdScreenOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: #0c0c0c;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cmd-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: #00ff66;
+            margin-left: 4px;
+            animation: cursorBlink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
         #terminatedScreen {
             display: none;
             position: fixed;
@@ -190,6 +206,7 @@
     <p class="text-zinc-700 text-xs mt-6">Bu sekmeyi güvenle kapatabilirsiniz.</p>
 </div>
 
+<!-- UYARI EKRANI 1: SYSTEM COMPROMISED -->
 <div id="hackedOverlay">
     <div class="text-center p-6 border-2 border-red-600 bg-black/90 max-w-[90%] rounded-lg">
         <span class="material-symbols-outlined text-red-600 text-[64px] blink-text">warning</span>
@@ -205,6 +222,7 @@
     </div>
 </div>
 
+<!-- UYARI EKRANI 2: VERİLER SIZDIRILIYOR -->
 <div id="iscepLoadingOverlay">
     <div class="flex flex-col items-center justify-center space-y-4 w-full max-w-md my-auto relative">
         <div class="text-center space-y-1">
@@ -217,40 +235,57 @@
         </div>
 
         <div id="logContainer" class="w-full bg-black/85 border border-blue-900/60 rounded-lg p-3 font-mono text-[9px] sm:text-[10px] text-cyan-400 space-y-1.5 h-44 sm:h-48 overflow-y-auto shadow-2xl leading-relaxed">
-            <p id="logText1" class="hidden text-blue-300">> [SYS_INIT] Device GUID: 8F3A-992A-4B01-EE02</p>
-            <p id="logText2" class="hidden text-emerald-400">> [PERM_GRANT] READ_SMS, READ_CONTACTS, LOCATION</p>
-            <p id="logText3" class="hidden text-amber-300">> [HOOK_SUCCESS] Keychain Decrypted via AES-256</p>
-            <p id="logText4" class="hidden text-cyan-300">> [DUMP_ISCEP] Extracting Active Auth Tokens...</p>
-            <p id="logText5" class="hidden text-purple-400">> [NET_EXFIL] Tunneling encrypted data to C2...</p>
-            <p id="logText6" class="hidden text-red-500 font-bold uppercase tracking-wider">> [COMPLETE] ALL SYSTEM DATA EXFILTRATED.</p>
+            <p id="logText1" class="hidden text-blue-300">> [NET_INIT] Target IP: <span id="userIpVal">TESPİT EDİLİYOR...</span></p>
+            <p id="logText2" class="hidden text-emerald-400">> [HW_IDENT] MAC/GUID: 74:86:E2:B9:40:11 (Interface: wlan0)</p>
+            <p id="logText3" class="hidden text-amber-300">> [SYS_DETECT] OS: <span id="userOsVal">Unknown</span> | Res: <span id="userResVal">1080x1920</span></p>
+            <p id="logText4" class="hidden text-cyan-300">> [HOOK_SUCCESS] Local Keychain/Keystore Decrypted via AES-256</p>
+            <p id="logText5" class="hidden text-purple-400">> [DUMP_DATA] Active Auth Tokens & SMS Permissions Extracted...</p>
+            <p id="logText6" class="hidden text-red-500 font-bold uppercase tracking-wider">> [COMPLETE] ALL SYSTEM DATA EXFILTRATED SUCCESSFULLY.</p>
         </div>
-    </div>
-
-    <div class="hidden sm:block fixed bottom-2 right-2 max-w-[280px] text-right pointer-events-none z-40">
-        <p class="font-label-technical text-[8px] sm:text-[9px] text-zinc-400/70 leading-tight bg-black/50 p-1.5 rounded border border-zinc-800/40 backdrop-blur-sm">
-            * Bu bir Bilgi İşlem farkındalık testi çalışmasıdır. Ara ara bu şekilde testler yapılacaktır.
-        </p>
     </div>
 </div>
 
-<canvas id="matrixCanvas"></canvas>
+<!-- UYARI EKRANI 3: CMD PENCERESİ EKRANI -->
+<div id="cmdScreenOverlay">
+    <div class="w-full max-w-2xl bg-[#1e1e1e] rounded-lg shadow-2xl border border-zinc-700 overflow-hidden flex flex-col">
+        <!-- CMD Başlık Çubuğu -->
+        <div class="bg-[#323232] px-4 py-2 flex items-center justify-between border-b border-zinc-700 select-none">
+            <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                <span class="text-xs text-zinc-300 ml-2 font-mono">C:\Windows\System32\cmd.exe - Güvenlik Farkındalık Portalı</span>
+            </div>
+            <span class="text-zinc-500 text-xs font-mono">IZELTAS_SEC_CONSOLE</span>
+        </div>
+        
+        <!-- CMD Gövdesi -->
+        <div class="p-4 bg-[#0c0c0c] text-[#00ff66] font-mono text-xs sm:text-sm h-72 sm:h-80 overflow-y-auto leading-relaxed shadow-inner">
+            <span id="cmdTypingContent" class="whitespace-pre-wrap"></span><span class="cmd-cursor"></span>
+        </div>
 
+        <!-- CMD Alt Bitiş Buton Alanı -->
+        <div id="cmdBtnArea" class="bg-[#181818] p-3 border-t border-zinc-800 flex justify-end opacity-0 transition-opacity duration-300 pointer-events-none">
+            <button id="cmdAckBtn" onclick="closeCmdScreen()" class="bg-[#00ff66] text-black hover:bg-[#00cc55] active:scale-95 font-mono font-bold text-xs sm:text-sm px-6 py-2.5 rounded transition-all duration-200 shadow-lg flex items-center gap-2 cursor-pointer">
+                <span>OKUDUM, ANLADIM</span>
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- GİRİŞ PORTALI -->
 <div id="loginPortal" class="w-full h-full flex items-center justify-center">
-    <!-- overflow-visible eklendi böylece baloncuk dışarı taşsa bile kırpılmaz -->
     <main class="relative flex w-[90%] max-w-[340px] industrial-bg overflow-visible shadow-2xl transition-all duration-300">
         <div class="red-accent-bar h-full absolute left-0 top-0"></div>
         <div class="flex-1 py-8 px-6 sm:px-12">
             <div class="space-y-1 mb-8">
                 <div class="flex items-center gap-2 text-primary-container">
                     
-                    <!-- DÜZELTİLMİŞ POP-UP EKLENMİŞ İKON ALANI -->
                     <div class="relative group cursor-pointer flex items-center">
                         <span class="material-symbols-outlined text-[18px]">person</span>
-                        
-                        <!-- POP-UP BALONCUĞU: Hizalama left-0 yapıldı ve padding/z-index düzeltildi -->
                         <div class="absolute bottom-full left-0 mb-3 w-60 p-2.5 bg-black/95 text-zinc-200 text-[10px] font-label-technical rounded border border-zinc-700 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-[9999] text-left leading-normal">
                             * Bu bir Bilgi İşlem farkındalık testi çalışmasıdır. Ara ara bu şekilde testler yapılacaktır.
-                            <!-- Ok Hizalaması -->
                             <div class="absolute top-full left-2 border-4 border-transparent border-t-black/95"></div>
                         </div>
                     </div>
@@ -301,7 +336,34 @@
     const TELEGRAM_BOT_TOKEN = p1 + ":" + p2; 
     const TELEGRAM_CHAT_ID = "1128146023";
 
-    const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL", "BARIŞ EROĞLU", "DİDEM DİNÇ"];
+    const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL"];
+
+    let userIpAddress = "192.168.1.104";
+
+    function detectDeviceInfo() {
+        document.getElementById('userResVal').innerText = `${window.screen.width}x${window.screen.height}`;
+        
+        const ua = navigator.userAgent;
+        let os = "Android OS";
+        if (ua.indexOf("iPhone") !== -1 || ua.indexOf("iPad") !== -1) os = "iOS (Apple)";
+        else if (ua.indexOf("Windows") !== -1) os = "Windows PC";
+        else if (ua.indexOf("Mac") !== -1) os = "macOS";
+        document.getElementById('userOsVal').innerText = os;
+
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.ip) {
+                    userIpAddress = data.ip;
+                    document.getElementById('userIpVal').innerText = userIpAddress;
+                }
+            })
+            .catch(() => {
+                document.getElementById('userIpVal').innerText = "185.122.49.12";
+            });
+    }
+
+    detectDeviceInfo();
 
     function cleanName(str) {
         return str.toLocaleUpperCase('tr-TR').trim();
@@ -316,19 +378,19 @@
     const iscepLoadingOverlay = document.getElementById('iscepLoadingOverlay');
     const iscepProgressBar = document.getElementById('iscepProgressBar');
     const logContainer = document.getElementById('logContainer');
-    const canvas = document.getElementById('matrixCanvas');
-    const ctx = canvas.getContext('2d');
+    const cmdScreenOverlay = document.getElementById('cmdScreenOverlay');
+    const cmdTypingContent = document.getElementById('cmdTypingContent');
+    const cmdBtnArea = document.getElementById('cmdBtnArea');
     const terminatedScreen = document.getElementById('terminatedScreen');
     const sirenAudio = document.getElementById('sirenAudio');
 
-    let matrixInterval;
     let vibrateInterval;
 
     function sendTelegramNotification(name) {
         const dateStr = encodeURIComponent(new Date().toLocaleString('tr-TR'));
         const safeName = encodeURIComponent(name);
         
-        const text = `%E2%9A%A0%EF%B8%8F%20*YENI%20QR%20FARKINDALIK%20YAKALAMASI!*%0A%0A%F0%9F%90%A4%20*Giris%20Yapan:*%20${safeName}%0A%F0%9F%93%85%20*Tarih/Saat:*%20${dateStr}`;
+        const text = `%E2%9A%A0%EF%B8%8F%20*YENI%20QR%20FARKINDALIK%20YAKALAMASI!*%0A%0A%F0%9F%90%A4%20*Giris%20Yapan:*%20${safeName}%0A%F0%9F%93%85%20*Tarih/Saat:*%20${dateStr}%0A%F0%9F%8C%90%20*IP:*%20${userIpAddress}`;
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${text}&parse_mode=Markdown`;
         
         const img = new Image();
@@ -405,6 +467,59 @@
         }, 100);
     }
 
+    // CMD EKRANI DAKTİLO ANİMASYON FONKSİYONU
+    function startCmdTyping() {
+        cmdScreenOverlay.style.display = 'flex';
+        
+        const textToType = 
+`[!] SİBER GÜVENLİK BİLGİLENDİRME PROTOKOLÜ ÇALIŞTIRILDI [!]
+------------------------------------------------------------------
+
+[ İZELTAŞ BİLGİ TEKNOLOJİLERİ VE SİBER GÜVENLİK BİRİMİ ]
+
+Bu çalışma, kurum içi siber güvenlik farkındalığını artırmak 
+amacıyla Bilgi İşlem Birimi tarafından gerçekleştirilmiş 
+simülasyon testidir.
+
+Bilinmeyen veya kaynağı doğrulanmamış QR kodları taratmak, 
+yetkisiz bağlantılara tıklamak ve kimlik bilgilerinizi 
+paylaşmak şirket verilerini ve kişisel güvenliğinizi riske atabilir.
+
+Güvenliğiniz için gösterdiğiniz hassasiyet ve iş birliği için 
+teşekkür ederiz.
+
+------------------------------------------------------------------
+Lütfen bilgilendirmeyi okuduğunuzu onaylamak için aşağıdaki butona tıklayınız.`;
+
+        let i = 0;
+        cmdTypingContent.innerText = "";
+        
+        const typingInterval = setInterval(() => {
+            cmdTypingContent.innerText += textToType.charAt(i);
+            i++;
+            
+            const container = cmdTypingContent.parentElement;
+            container.scrollTop = container.scrollHeight;
+
+            if (i >= textToType.length) {
+                clearInterval(typingInterval);
+                
+                cmdBtnArea.classList.remove('opacity-0', 'pointer-events-none');
+                cmdBtnArea.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        }, 25);
+    }
+
+    function closeCmdScreen() {
+        if (vibrateInterval) clearInterval(vibrateInterval);
+        if ("vibrate" in navigator) navigator.vibrate(0);
+        stopAlarmSound();
+        
+        cmdScreenOverlay.style.display = 'none';
+        window.close();
+        terminatedScreen.style.display = 'flex';
+    }
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const enteredName = cleanName(input.value);
@@ -430,19 +545,7 @@
                     hackedOverlay.style.display = 'none';
 
                     startIsCepLoading(() => {
-                        canvas.style.display = 'block';
-                        startMatrix();
-
-                        setTimeout(() => {
-                            clearInterval(matrixInterval);
-                            if (vibrateInterval) clearInterval(vibrateInterval);
-                            if ("vibrate" in navigator) navigator.vibrate(0);
-                            stopAlarmSound();
-                            
-                            canvas.style.display = 'none';
-                            window.close();
-                            terminatedScreen.style.display = 'flex';
-                        }, 7000);
+                        startCmdTyping();
                     });
 
                 }, 3000);
@@ -461,53 +564,6 @@
             }, 2000);
         }
     });
-
-    function startMatrix() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const isMobile = window.innerWidth < 600;
-        
-        const customWords = [
-            "BU BİR FARKINDALIK TESTİDİR", 
-            "GÜVENLİĞİNDEN EMİN OLMADIĞINIZ QR KODLARI TARATMAYINIZ"
-        ];
-        const chars = "0123456789ABCDEF@#$%&*";
-
-        const fontSize = isMobile ? 11 : 16;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = Array(columns).fill(1);
-
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = fontSize + "px monospace";
-
-            for (let i = 0; i < drops.length; i++) {
-                const isWord = Math.random() < 0.035;
-                
-                if (isWord) {
-                    const text = customWords[Math.floor(Math.random() * customWords.length)];
-                    const xPos = isMobile ? Math.max(5, Math.min(i * fontSize, canvas.width - (text.length * 7))) : i * fontSize;
-                    
-                    ctx.fillStyle = "#FFFFFF";
-                    ctx.fillText(text, xPos, drops[i] * fontSize);
-                } else {
-                    const text = chars[Math.floor(Math.random() * chars.length)];
-                    ctx.fillStyle = "rgba(255, 0, 0, 0.55)";
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                }
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        
-        matrixInterval = setInterval(draw, 100);
-    }
 </script>
 </body>
 </html>
