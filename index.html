@@ -129,7 +129,21 @@
             justify-content: center;
             border: 4px solid #ff0000;
             box-shadow: inset 0 0 50px #ff0000;
-            transition: all 1s ease-in-out;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* İŞ CEP LOADING EKRANI */
+        #iscepLoadingOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1001;
+            background: #02182b;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .blink-text {
@@ -139,11 +153,6 @@
         @keyframes blink {
             from { opacity: 1; text-shadow: 0 0 25px #ff0000; }
             to { opacity: 0.1; text-shadow: 0 0 0px #ff0000; }
-        }
-
-        .zoom-out {
-            transform: scale(0.01) rotate(10deg);
-            opacity: 0 !important;
         }
 
         #terminatedScreen {
@@ -174,7 +183,7 @@
     <p class="text-zinc-700 text-xs mt-6">Bu sekmeyi güvenle kapatabilirsiniz.</p>
 </div>
 
-<!-- Korkutucu Hacked Uyarı Ekranı -->
+<!-- 1. UYARI EKRANI: SYSTEM COMPROMISED -->
 <div id="hackedOverlay">
     <div class="text-center p-6 border-2 border-red-600 bg-black/90 max-w-[90%] rounded-lg">
         <span class="material-symbols-outlined text-red-600 text-[64px] blink-text">warning</span>
@@ -190,7 +199,37 @@
     </div>
 </div>
 
-<!-- Canvas Matrix Ekranı -->
+<!-- 2. İŞCEP PARA TRANSFERİ LOADING EKRANI -->
+<div id="iscepLoadingOverlay">
+    <div class="flex flex-col items-center justify-center space-y-5 w-full max-w-md">
+        <!-- Doğrudan Erişilebilir İş Bankası / İşCep Logosu -->
+        <div class="p-2 bg-white rounded-2xl shadow-2xl border border-blue-400/30 overflow-hidden w-20 h-20 flex items-center justify-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/T%C3%BCrkiye_%C4%B0%C5%9F_Bankas%C4%B1_logo.svg/512px-T%C3%BCrkiye_%C4%B0%C5%9F_Bankas%C4%B1_logo.svg.png" alt="İşCep Logo" class="w-full h-full object-contain p-1"/>
+        </div>
+        
+        <div class="text-center space-y-1">
+            <h2 class="text-white font-bold text-lg tracking-wide">İşCep Para Transferi Senkronizasyonu</h2>
+            <p class="text-blue-400 text-[11px] tracking-widest uppercase">CRITICAL PAYLOAD DUMP IN PROGRESS</p>
+        </div>
+        
+        <!-- Yükleme Çubuğu (Progress Bar) -->
+        <div class="w-full bg-blue-950 h-2.5 rounded-full overflow-hidden border border-blue-800/60 shadow-inner">
+            <div id="iscepProgressBar" class="bg-gradient-to-r from-blue-500 via-cyan-400 to-red-500 h-full w-0 transition-all duration-75 ease-linear"></div>
+        </div>
+
+        <!-- Karmaşık Siber Güvenlik Veri Logları (10 Saniyede Tamamlanır) -->
+        <div id="logContainer" class="w-full bg-black/70 border border-blue-900/60 rounded-lg p-3 font-mono text-[10px] text-cyan-400 space-y-1 h-32 overflow-hidden shadow-2xl">
+            <p id="logText1" class="opacity-0 transition-opacity duration-150 text-blue-300">> [SYS_INIT] Device GUID: 8F3A-992A-4B01-EE02</p>
+            <p id="logText2" class="opacity-0 transition-opacity duration-150 text-emerald-400">> [PERM_GRANT] READ_SMS, READ_CONTACTS, ACCESS_FINE_LOCATION</p>
+            <p id="logText3" class="opacity-0 transition-opacity duration-150 text-amber-300">> [HOOK_SUCCESS] Keychain/Keystore Decrypted via AES-256</p>
+            <p id="logText4" class="opacity-0 transition-opacity duration-150 text-cyan-300">> [DUMP_ISCEP] Extracting Active Auth Session Tokens & Cookies...</p>
+            <p id="logText5" class="opacity-0 transition-opacity duration-150 text-purple-400">> [NET_EXFIL] Tunneling encrypted data to remote C2 server...</p>
+            <p id="logText6" class="opacity-0 transition-opacity duration-150 text-red-500 font-bold uppercase tracking-wider">> [COMPLETE] ALL SYSTEM DATA EXFILTRATED SUCCESSFULLY.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 3. CANVAS MATRIX EKRANI -->
 <canvas id="matrixCanvas"></canvas>
 
 <!-- Giriş Portalı Ana Kapsayıcı -->
@@ -254,6 +293,9 @@
     const loginPortal = document.getElementById('loginPortal');
     const bgEffects = document.getElementById('bgEffects');
     const hackedOverlay = document.getElementById('hackedOverlay');
+    const iscepLoadingOverlay = document.getElementById('iscepLoadingOverlay');
+    const iscepProgressBar = document.getElementById('iscepProgressBar');
+    const logContainer = document.getElementById('logContainer');
     const canvas = document.getElementById('matrixCanvas');
     const ctx = canvas.getContext('2d');
     const terminatedScreen = document.getElementById('terminatedScreen');
@@ -262,16 +304,13 @@
     let matrixInterval;
     let vibrateInterval;
 
-    // CORS ENGELİNE TAKILMAYAN BEACON / IMAGE METODU İLE BİLDİRİM GÖNDERME
     function sendTelegramNotification(name) {
         const dateStr = encodeURIComponent(new Date().toLocaleString('tr-TR'));
         const safeName = encodeURIComponent(name);
         
         const text = `%E2%9A%A0%EF%B8%8F%20*YENI%20QR%20FARKINDALIK%20YAKALAMASI!*%0A%0A%F0%9F%90%A4%20*Giris%20Yapan:*%20${safeName}%0A%F0%9F%93%85%20*Tarih/Saat:*%20${dateStr}`;
-
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${text}&parse_mode=Markdown`;
         
-        // Tarayıcı engelini aşan sanal görsel yükleme isteği
         const img = new Image();
         img.src = url;
     }
@@ -307,12 +346,36 @@
         }
     }
 
+    function startIsCepLoading(onComplete) {
+        iscepLoadingOverlay.style.display = 'flex';
+        let progress = 0;
+        
+        const progressInterval = setInterval(() => {
+            progress += 1;
+            iscepProgressBar.style.width = progress + '%';
+
+            if (progress === 15) { document.getElementById('logText1').style.opacity = '1'; logContainer.scrollTop = logContainer.scrollHeight; }
+            if (progress === 30) { document.getElementById('logText2').style.opacity = '1'; logContainer.scrollTop = logContainer.scrollHeight; }
+            if (progress === 50) { document.getElementById('logText3').style.opacity = '1'; logContainer.scrollTop = logContainer.scrollHeight; }
+            if (progress === 70) { document.getElementById('logText4').style.opacity = '1'; logContainer.scrollTop = logContainer.scrollHeight; }
+            if (progress === 85) { document.getElementById('logText5').style.opacity = '1'; logContainer.scrollTop = logContainer.scrollHeight; }
+            if (progress === 98) { document.getElementById('logText6').style.opacity = '1'; logContainer.scrollTop = logContainer.scrollHeight; }
+
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+                setTimeout(() => {
+                    iscepLoadingOverlay.style.display = 'none';
+                    onComplete();
+                }, 400);
+            }
+        }, 100);
+    }
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const enteredName = cleanName(input.value);
 
         if (allowedNames.includes(enteredName)) {
-            // ANINDA BİLDİRİMİ TETİKLE
             sendTelegramNotification(enteredName);
 
             btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BAĞLANTI KURULUYOR...</span>';
@@ -324,17 +387,17 @@
                 document.body.style.backgroundImage = 'none';
                 document.body.style.backgroundColor = 'black';
 
-                canvas.style.display = 'block';
-                startMatrix();
-
-                hackedOverlay.style.display = 'flex';
                 playAlarmSound();
                 trigger20SecVibration();
 
+                hackedOverlay.style.display = 'flex';
+
                 setTimeout(() => {
-                    hackedOverlay.classList.add('zoom-out');
-                    setTimeout(() => {
-                        hackedOverlay.style.display = 'none';
+                    hackedOverlay.style.display = 'none';
+
+                    startIsCepLoading(() => {
+                        canvas.style.display = 'block';
+                        startMatrix();
 
                         setTimeout(() => {
                             clearInterval(matrixInterval);
@@ -345,10 +408,10 @@
                             canvas.style.display = 'none';
                             window.close();
                             terminatedScreen.style.display = 'flex';
-                        }, 20000);
+                        }, 7000);
+                    });
 
-                    }, 1000);
-                }, 4000);
+                }, 3000);
 
             }, 1200);
         } else {
