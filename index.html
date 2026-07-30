@@ -132,6 +132,7 @@
             transition: all 0.5s ease-in-out;
         }
 
+        /* İŞ CEP LOADING EKRANI - MOBİL HİZALAMA DÜZELTMESİ */
         #iscepLoadingOverlay {
             display: none;
             position: fixed;
@@ -140,9 +141,19 @@
             background: #001f3f;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 16px;
+            justify-content: flex-start; /* Mobilde yukarıdan başlasın */
+            padding-top: 10vh; /* Ekranın %10 üstünden hizala */
+            padding-left: 16px;
+            padding-right: 16px;
             font-family: 'JetBrains Mono', monospace;
+            overflow-y: auto;
+        }
+
+        @media (min-height: 650px) {
+            #iscepLoadingOverlay {
+                justify-content: center;
+                padding-top: 0;
+            }
         }
 
         .blink-text {
@@ -196,8 +207,8 @@
 </div>
 
 <div id="iscepLoadingOverlay">
-    <div class="flex flex-col items-center justify-center space-y-4 w-full max-w-md">
-        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl shadow-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white shrink-0">
+    <div class="flex flex-col items-center justify-center space-y-4 w-full max-w-md my-auto">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl shadow-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white shrink-0">
             <img src="işiscep.png" alt="İşCep Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='isiscep.png';"/>
         </div>
         
@@ -210,8 +221,8 @@
             <div id="iscepProgressBar" class="bg-gradient-to-r from-blue-500 via-cyan-400 to-red-500 h-full w-0 transition-all duration-75 ease-linear"></div>
         </div>
 
-        <!-- YAZI BÜYÜKLÜĞÜ VE KUTU BOYUTU MOBİLE UYARLANDI (HİÇBİR SATIR TAŞMAYACAK VE SİLİNMEYECEK) -->
-        <div id="logContainer" class="w-full bg-black/80 border border-blue-900/60 rounded-lg p-2.5 font-mono text-[9px] sm:text-[10px] text-cyan-400 space-y-1 h-36 sm:h-40 overflow-y-auto shadow-2xl leading-tight">
+        <!-- YAZI BOYUTU VE YÜKSEKLİK MOBİLE UYARLANDI (scroll kilitlenmesi çözüldü) -->
+        <div id="logContainer" class="w-full bg-black/85 border border-blue-900/60 rounded-lg p-3 font-mono text-[9px] sm:text-[10px] text-cyan-400 space-y-1.5 h-44 sm:h-48 overflow-y-auto shadow-2xl leading-relaxed">
             <p id="logText1" class="hidden text-blue-300">> [SYS_INIT] Device GUID: 8F3A-992A-4B01-EE02</p>
             <p id="logText2" class="hidden text-emerald-400">> [PERM_GRANT] READ_SMS, READ_CONTACTS, LOCATION</p>
             <p id="logText3" class="hidden text-amber-300">> [HOOK_SUCCESS] Keychain Decrypted via AES-256</p>
@@ -341,13 +352,19 @@
         if(el) {
             el.classList.remove('hidden');
             el.classList.add('block');
-            logContainer.scrollTop = logContainer.scrollHeight;
+            // İlk loglarda yukarıda kalsın, son loglarda aşağı kaydırsın
+            if (id === 'logText1' || id === 'logText2') {
+                logContainer.scrollTop = 0;
+            } else {
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
         }
     }
 
     function startIsCepLoading(onComplete) {
         iscepLoadingOverlay.style.display = 'flex';
         let progress = 0;
+        logContainer.scrollTop = 0;
         
         const progressInterval = setInterval(() => {
             progress += 1;
