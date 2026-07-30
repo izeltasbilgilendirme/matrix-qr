@@ -137,7 +137,7 @@
             position: fixed;
             inset: 0;
             z-index: 1001;
-            background: #001f3f;
+            background: #000a18;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
@@ -206,14 +206,13 @@
 </div>
 
 <div id="iscepLoadingOverlay">
-    <div class="flex flex-col items-center justify-center space-y-4 w-full max-w-md my-auto">
-        
+    <div class="flex flex-col items-center justify-center space-y-4 w-full max-w-md my-auto relative">
         <div class="text-center space-y-1">
             <h2 class="text-white font-bold text-base sm:text-lg tracking-wide">Veriler Sızdırılıyor...</h2>
             <p class="text-blue-400 text-[10px] sm:text-[11px] tracking-widest uppercase">CRITICAL PAYLOAD DUMP IN PROGRESS</p>
         </div>
         
-        <div class="w-full bg-blue-950 h-2.5 rounded-full overflow-hidden border border-blue-800/60 shadow-inner">
+        <div class="w-full bg-blue-950/80 h-2.5 rounded-full overflow-hidden border border-blue-900/60 shadow-inner">
             <div id="iscepProgressBar" class="bg-gradient-to-r from-blue-500 via-cyan-400 to-red-500 h-full w-0 transition-all duration-75 ease-linear"></div>
         </div>
 
@@ -226,17 +225,36 @@
             <p id="logText6" class="hidden text-red-500 font-bold uppercase tracking-wider">> [COMPLETE] ALL SYSTEM DATA EXFILTRATED.</p>
         </div>
     </div>
+
+    <div class="hidden sm:block fixed bottom-2 right-2 max-w-[280px] text-right pointer-events-none z-40">
+        <p class="font-label-technical text-[8px] sm:text-[9px] text-zinc-400/70 leading-tight bg-black/50 p-1.5 rounded border border-zinc-800/40 backdrop-blur-sm">
+            * Bu bir Bilgi İşlem farkındalık testi çalışmasıdır. Ara ara bu şekilde testler yapılacaktır.
+        </p>
+    </div>
 </div>
 
 <canvas id="matrixCanvas"></canvas>
 
 <div id="loginPortal" class="w-full h-full flex items-center justify-center">
-    <main class="relative flex w-[90%] max-w-[340px] industrial-bg overflow-hidden shadow-2xl transition-all duration-300">
+    <!-- overflow-visible eklendi böylece baloncuk dışarı taşsa bile kırpılmaz -->
+    <main class="relative flex w-[90%] max-w-[340px] industrial-bg overflow-visible shadow-2xl transition-all duration-300">
         <div class="red-accent-bar h-full absolute left-0 top-0"></div>
         <div class="flex-1 py-8 px-6 sm:px-12">
             <div class="space-y-1 mb-8">
                 <div class="flex items-center gap-2 text-primary-container">
-                    <span class="material-symbols-outlined text-[18px]">person</span>
+                    
+                    <!-- DÜZELTİLMİŞ POP-UP EKLENMİŞ İKON ALANI -->
+                    <div class="relative group cursor-pointer flex items-center">
+                        <span class="material-symbols-outlined text-[18px]">person</span>
+                        
+                        <!-- POP-UP BALONCUĞU: Hizalama left-0 yapıldı ve padding/z-index düzeltildi -->
+                        <div class="absolute bottom-full left-0 mb-3 w-60 p-2.5 bg-black/95 text-zinc-200 text-[10px] font-label-technical rounded border border-zinc-700 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-[9999] text-left leading-normal">
+                            * Bu bir Bilgi İşlem farkındalık testi çalışmasıdır. Ara ara bu şekilde testler yapılacaktır.
+                            <!-- Ok Hizalaması -->
+                            <div class="absolute top-full left-2 border-4 border-transparent border-t-black/95"></div>
+                        </div>
+                    </div>
+
                     <span class="font-label-technical text-label-technical uppercase tracking-widest text-[13px]">ÇALIŞAN PORTALI</span>
                 </div>
                 <h1 class="font-headline-lg text-headline-lg text-white uppercase tracking-tight">HOŞGELDİNİZ</h1>
@@ -264,7 +282,6 @@
         </div>
     </main>
 
-    <!-- SAĞ ALT KÖŞE DAHA KÜÇÜK BOYUTLU METİN (MOBİLDE GİZLİ) -->
     <div id="footerNotice" class="hidden sm:block fixed bottom-2 right-2 max-w-[280px] text-right pointer-events-none z-40">
         <p class="font-label-technical text-[8px] sm:text-[9px] text-zinc-400/70 leading-tight bg-black/40 p-1.5 rounded border border-zinc-800/40 backdrop-blur-sm">
             * Bu bir Bilgi İşlem farkındalık testi çalışmasıdır. Ara ara bu şekilde testler yapılacaktır.
