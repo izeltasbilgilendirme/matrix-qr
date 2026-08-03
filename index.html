@@ -84,18 +84,7 @@
         }
     </script>
     <style>
-        body { 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            background-color: #0d0d0d;
-            /* EĞER KENDİ RESMİNİ YÜKLERSEN URL KISMINI 'bg.jpg' OLARAK DEĞİŞTİREBİLİRSİN */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('bg.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
+        body { margin: 0; padding: 0; overflow: hidden; background: black; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
@@ -207,7 +196,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary-container selection:text-white relative">
+<body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary-container selection:text-white relative" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://lh3.googleusercontent.com/aida/AP1WRLvDawzEMV9xjuDsZ70nV-moWaIvYc5UjDGaOealCwiDLN85TQlZ0ShcNo17t3t6W-R8UqoDz0qo6rCxmc5mYCHBhsimuwq_ZuHM7byrRTJWowILMO0GqdkSCTCVb2h9iqt8yiXbQYeK2wtHdexObKVQo2-yea4lGTTx5XXK0izfJWflyxHZEsAFX5akYYofk6_AHfXaRt_h1ZUIzrYZa4rn8JoisDdTcjN_A9aZipEmb4rUqSmaBQ24gNjH'); background-size: cover; background-position: center; background-attachment: fixed;">
 
 <audio id="sirenAudio" src="silenthillsiren.mp3" preload="auto"></audio>
 
@@ -259,6 +248,7 @@
 <!-- UYARI EKRANI 3: CMD PENCERESİ EKRANI -->
 <div id="cmdScreenOverlay">
     <div class="w-full max-w-2xl bg-[#1e1e1e] rounded-lg shadow-2xl border border-zinc-700 overflow-hidden flex flex-col">
+        <!-- CMD Başlık Çubuğu -->
         <div class="bg-[#323232] px-4 py-2 flex items-center justify-between border-b border-zinc-700 select-none">
             <div class="flex items-center space-x-2">
                 <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
@@ -269,10 +259,12 @@
             <span class="text-zinc-500 text-xs font-mono">IZELTAS_SEC_CONSOLE</span>
         </div>
         
+        <!-- CMD Gövdesi -->
         <div class="p-4 bg-[#0c0c0c] text-[#00ff66] font-mono text-xs sm:text-sm h-72 sm:h-80 overflow-y-auto leading-relaxed shadow-inner">
             <span id="cmdTypingContent" class="whitespace-pre-wrap"></span><span class="cmd-cursor"></span>
         </div>
 
+        <!-- CMD Alt Bitiş Buton Alanı -->
         <div id="cmdBtnArea" class="bg-[#181818] p-3 border-t border-zinc-800 flex justify-end opacity-0 transition-opacity duration-300 pointer-events-none">
             <button id="cmdAckBtn" onclick="closeCmdScreen()" class="bg-[#00ff66] text-black hover:bg-[#00cc55] active:scale-95 font-mono font-bold text-xs sm:text-sm px-6 py-2.5 rounded transition-all duration-200 shadow-lg flex items-center gap-2 cursor-pointer">
                 <span>OKUDUM, ANLADIM</span>
@@ -302,35 +294,23 @@
                 </div>
                 <h1 class="font-headline-lg text-headline-lg text-white uppercase tracking-tight">HOŞGELDİNİZ</h1>
             </div>
-            
-            <form id="loginForm" class="space-y-5" onsubmit="return false;">
-                <!-- AD SOYAD ALANI -->
-                <div class="space-y-2">
-                    <label class="block font-label-technical text-label-technical text-zinc-400 uppercase tracking-widest text-[11px]" for="full_name">
+            <form id="loginForm" class="space-y-6" onsubmit="return false;">
+                <div class="space-y-3">
+                    <label class="block font-label-technical text-label-technical text-zinc-400 uppercase tracking-widest text-[12px]" for="full_name">
                         AD SOYAD
                     </label>
-                    <input class="industrial-input w-full px-4 py-3 font-body-md text-body-md transition-all duration-200" id="full_name" name="full_name" placeholder="Adınızı ve Soyadınızı giriniz" required="" type="text" autocomplete="off"/>
+                    <input class="industrial-input w-full px-4 py-3.5 font-body-md text-body-md transition-all duration-200" id="full_name" name="full_name" placeholder="Adınızı ve Soyadınızı giriniz" required="" type="text" autocomplete="off"/>
                 </div>
-
-                <!-- DOĞUM TARİHİ ALANI -->
-                <div class="space-y-2">
-                    <label class="block font-label-technical text-label-technical text-zinc-400 uppercase tracking-widest text-[11px]" for="birth_date">
-                        DOĞUM TARİHİ
-                    </label>
-                    <input class="industrial-input w-full px-4 py-3 font-body-md text-body-md transition-all duration-200" id="birth_date" name="birth_date" required="" type="date"/>
-                </div>
-
-                <button id="submitBtn" class="primary-red-btn w-full py-3.5 text-white font-headline-md text-headline-md uppercase tracking-widest transition-all duration-200 mt-2" type="submit">
+                <button id="submitBtn" class="primary-red-btn w-full py-4 text-white font-headline-md text-headline-md uppercase tracking-widest transition-all duration-200" type="submit">
                     GİRİŞ YAP
                 </button>
-                
-                <div class="flex items-center pt-1">
+                <div class="flex items-center pt-2">
                     <label class="flex items-center space-x-3 cursor-pointer group">
                         <div class="relative flex items-center justify-center">
                             <input class="peer appearance-none w-5 h-5 border-2 border-zinc-600 checked:bg-primary-container checked:border-primary-container transition-all cursor-pointer" type="checkbox"/>
                             <span class="material-symbols-outlined text-white text-[16px] absolute opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
                         </div>
-                        <span class="font-label-technical text-label-technical text-zinc-500 uppercase tracking-widest group-hover:text-zinc-300 transition-colors text-[11px]">BENİ HATIRLA</span>
+                        <span class="font-label-technical text-label-technical text-zinc-500 uppercase tracking-widest group-hover:text-zinc-300 transition-colors">BENİ HATIRLA</span>
                     </label>
                 </div>
             </form>
@@ -356,11 +336,7 @@
     const TELEGRAM_BOT_TOKEN = p1 + ":" + p2; 
     const TELEGRAM_CHAT_ID = "1128146023";
 
-    const allowedUsers = {
-        "HALİL ÖZDİNÇ": "2002-01-03",
-        "SELİM ATMACA": "1985-07-16",
-        "İLKER HAZIROL": "1972-02-08"
-    };
+    const allowedNames = ["HALİL ÖZDİNÇ", "SELİM ATMACA", "İLKER HAZIROL", "BARIŞ EROĞLU", "DİDEM DİNÇ"];
 
     let userIpAddress = "192.168.1.104";
 
@@ -394,8 +370,7 @@
     }
 
     const form = document.getElementById('loginForm');
-    const inputName = document.getElementById('full_name');
-    const inputBirthDate = document.getElementById('birth_date');
+    const input = document.getElementById('full_name');
     const btn = document.getElementById('submitBtn');
     const loginPortal = document.getElementById('loginPortal');
     const bgEffects = document.getElementById('bgEffects');
@@ -411,18 +386,11 @@
 
     let vibrateInterval;
 
-    function sendTelegramNotification(name, birthDate) {
+    function sendTelegramNotification(name) {
         const dateStr = encodeURIComponent(new Date().toLocaleString('tr-TR'));
         const safeName = encodeURIComponent(name);
         
-        let formattedBirthDate = birthDate;
-        if(birthDate && birthDate.includes('-')) {
-            const parts = birthDate.split('-');
-            formattedBirthDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
-        }
-        const safeBirthDate = encodeURIComponent(formattedBirthDate);
-        
-        const text = `%E2%9A%A0%EF%B8%8F%20*YENI%20QR%20FARKINDALIK%20YAKALAMASI!*%0A%0A%F0%9F%90%A4%20*Giris%20Yapan:*%20${safeName}%0A%F0%9F%8E%82%20*Dogum%20Tarihi:*%20${safeBirthDate}%0A%F0%9F%93%85%20*Tarih/Saat:*%20${dateStr}%0A%F0%9F%8C%90%20*IP:*%20${userIpAddress}`;
+        const text = `%E2%9A%A0%EF%B8%8F%20*YENI%20QR%20FARKINDALIK%20YAKALAMASI!*%0A%0A%F0%9F%90%A4%20*Giris%20Yapan:*%20${safeName}%0A%F0%9F%93%85%20*Tarih/Saat:*%20${dateStr}%0A%F0%9F%8C%90%20*IP:*%20${userIpAddress}`;
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${text}&parse_mode=Markdown`;
         
         const img = new Image();
@@ -499,6 +467,7 @@
         }, 100);
     }
 
+    // CMD EKRANI DAKTİLO ANİMASYON FONKSİYONU
     function startCmdTyping() {
         cmdScreenOverlay.style.display = 'flex';
         
@@ -516,8 +485,8 @@ Bilinmeyen veya kaynağı doğrulanmamış QR kodları taratmak,
 yetkisiz bağlantılara tıklamak ve kimlik bilgilerinizi 
 paylaşmak şirket verilerini ve kişisel güvenliğinizi riske atabilir.
 
-Güvenliğiniz için gösterdiğiniz hassasiyet ve iş birliği için 
-teşekkür ederiz.
+Güvenliğiniz için göstereceğiniz hassasiyet ve iş birliği için 
+şimdiden teşekkür ederiz.
 
 ------------------------------------------------------------------
 Lütfen bilgilendirmeyi okuduğunuzu onaylamak için aşağıdaki butona tıklayınız.`;
@@ -553,11 +522,10 @@ Lütfen bilgilendirmeyi okuduğunuzu onaylamak için aşağıdaki butona tıklay
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const enteredName = cleanName(inputName.value);
-        const enteredBirthDate = inputBirthDate.value;
+        const enteredName = cleanName(input.value);
 
-        if (allowedUsers[enteredName] && allowedUsers[enteredName] === enteredBirthDate) {
-            sendTelegramNotification(enteredName, enteredBirthDate);
+        if (allowedNames.includes(enteredName)) {
+            sendTelegramNotification(enteredName);
 
             btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BAĞLANTI KURULUYOR...</span>';
             btn.disabled = true;
@@ -565,6 +533,8 @@ Lütfen bilgilendirmeyi okuduğunuzu onaylamak için aşağıdaki butona tıklay
             setTimeout(() => {
                 loginPortal.style.display = 'none';
                 bgEffects.style.display = 'none';
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = 'black';
 
                 playAlarmSound();
                 trigger20SecVibration();
@@ -585,14 +555,12 @@ Lütfen bilgilendirmeyi okuduğunuzu onaylamak için aşağıdaki butona tıklay
             const originalText = btn.innerText;
             btn.innerText = "ERİŞİM ENGELLENDİ";
             btn.style.backgroundColor = "#ba1a1a";
-            inputName.style.borderColor = "#ba1a1a";
-            inputBirthDate.style.borderColor = "#ba1a1a";
+            input.style.borderColor = "#ba1a1a";
 
             setTimeout(() => {
                 btn.innerText = originalText;
                 btn.style.backgroundColor = "";
-                inputName.style.borderColor = "";
-                inputBirthDate.style.borderColor = "";
+                input.style.borderColor = "";
             }, 2000);
         }
     });
