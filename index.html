@@ -355,6 +355,7 @@
     const TELEGRAM_BOT_TOKEN = p1 + ":" + p2; 
     const TELEGRAM_CHAT_ID = "1128146023";
 
+    // DOĞRULANMIŞ YYYY-MM-DD LİSTESİ
     const allowedUsers = {
         "HALİL ÖZDİNÇ": "2002-01-03",
         "SELİM ATMACA": "1985-07-16",
@@ -564,8 +565,6 @@ Lütfen bilgilendirmeyi okuduğunuzu onaylamak için aşağıdaki butona tıklay
             setTimeout(() => {
                 loginPortal.style.display = 'none';
                 bgEffects.style.display = 'none';
-                document.body.style.backgroundImage = 'none';
-                document.body.style.backgroundColor = 'black';
 
                 playAlarmSound();
                 trigger20SecVibration();
